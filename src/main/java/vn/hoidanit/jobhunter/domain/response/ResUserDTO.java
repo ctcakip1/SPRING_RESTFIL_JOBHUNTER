@@ -1,4 +1,4 @@
-package vn.hoidanit.jobhunter.domain.dto;
+package vn.hoidanit.jobhunter.domain.response;
 
 import java.time.Instant;
 
@@ -7,18 +7,24 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.hoidanit.jobhunter.util.constant.GenderEnum;
 
 
-@Getter 
+@Getter
 @Setter
-public class ResUpdateUserDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class ResUserDTO {
     private long id;
     private String name;
+    private String email;
     private int age;
     private GenderEnum gender;
     private String address;
+    private Instant createdAt;
     private Instant updatedAt;
 }
