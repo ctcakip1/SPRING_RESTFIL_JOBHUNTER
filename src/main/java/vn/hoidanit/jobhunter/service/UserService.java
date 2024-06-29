@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 
 import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
@@ -22,12 +24,19 @@ import vn.hoidanit.jobhunter.repository.UserRepository;
 
 public class UserService {
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
     public User handleCreateUser(User user) {
+        // check company
+        if (user.getCompany() != null) {
+            Company company = this.companyService.getCompanyById(user.getCompany().getId());
+            user.setCompany(company != null ? company : null);
+        }
         return this.userRepository.save(user);
     }
 
@@ -36,7 +45,11 @@ public class UserService {
     }
 
     public User handleGetUserById(long id) {
-        return this.userRepository.findById(id);
+        User user = this.userRepository.findById(id);
+        if (user != null) {
+            return user;
+        }
+        return null;
     }
 
     public boolean isEmailExist(String email) {
@@ -45,6 +58,11 @@ public class UserService {
 
     public ResUserDTO convertToResUserDTO(User user) {
         ResUserDTO res = new ResUserDTO();
+        ResUserDTO.CompanyUser com = new ResUserDTO.CompanyUser();
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            res.setCompany(com);
+        }
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());
@@ -58,6 +76,7 @@ public class UserService {
 
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO res = new ResCreateUserDTO();
+        ResCreateUserDTO.CompanyUser com = new ResCreateUserDTO.CompanyUser();
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());
@@ -65,11 +84,21 @@ public class UserService {
         res.setAddress(user.getAddress());
         res.setGender(user.getGender());
         res.setCreatedAt(user.getCreatedAt());
+
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            res.setCompany(com);
+        }
         return res;
     }
 
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO res = new ResUpdateUserDTO();
+        ResUpdateUserDTO.CompanyUser com = new ResUpdateUserDTO.CompanyUser();
+        if(user.getCompany() != null){
+            com.setId(user.getCompany().getId());
+            res.setCompany(com);
+        }
         res.setId(user.getId());
         res.setName(user.getName());
         res.setAge(user.getAge());
@@ -101,7 +130,10 @@ public class UserService {
                     item.getGender(),
                     item.getAddress(),
                     item.getCreatedAt(),
-                    item.getUpdatedAt());
+                    item.getUpdatedAt(),
+                    new ResUserDTO.CompanyUser(
+                        item.getCompany() != null ? item.getCompany().getId() : 0
+                    ));
             listUser.add(res);
         }
 
@@ -116,6 +148,11 @@ public class UserService {
             currentUser.setAddress(user.getAddress());
             currentUser.setGender(user.getGender());
             currentUser.setAge(user.getAge());
+
+            if(user.getCompany() != null){
+                Company company = this.companyService.getCompanyById(user.getCompany().getId());
+                user.setCompany(company != null ? company : null);
+            }
             currentUser = this.userRepository.save(currentUser);
         }
         return currentUser;
@@ -125,17 +162,16 @@ public class UserService {
         return this.userRepository.findByEmail(username);
     }
 
-    public void updateUserToken(String token, String email){
+    public void updateUserToken(String token, String email) {
         User currentUser = this.handleGetUserByUsername(email);
-        if(currentUser != null){
+        if (currentUser != null) {
             currentUser.setRefreshToken(token);
             this.userRepository.save(currentUser);
         }
     }
 
-    public User getUserByRefreshTokenAndEmail(String token, String email){
+    public User getUserByRefreshTokenAndEmail(String token, String email) {
         return this.userRepository.findByRefreshTokenAndEmail(token, email);
     }
 
-    
 }

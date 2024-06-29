@@ -11,8 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import vn.hoidanit.jobhunter.util.constant.GenderEnum;
 
-
-@Getter 
+@Getter
 @Setter
 public class ResUpdateUserDTO {
     private long id;
@@ -21,4 +20,12 @@ public class ResUpdateUserDTO {
     private GenderEnum gender;
     private String address;
     private Instant updatedAt;
+    private CompanyUser company;
+
+    @Getter
+    @Setter
+    public static class CompanyUser {
+        private long id;
+    }
+
 }
