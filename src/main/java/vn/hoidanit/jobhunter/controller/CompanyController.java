@@ -46,7 +46,14 @@ public class CompanyController {
     @ApiMessage("fetch all companies")
     public ResponseEntity<ResultPaginationDTO> getAllCompany(
             @Filter Specification<Company> spec, Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleGetAllCompany(spec,pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleGetAllCompany(spec, pageable));
+    }
+
+    @GetMapping("/companies/{id}")
+    @ApiMessage("fetch company by id")
+    public ResponseEntity<Company> getCompanyById(@PathVariable("id") long id) {
+        Company company = this.companyService.getCompanyById(id);
+        return ResponseEntity.ok().body(company);
     }
 
     @PutMapping("/companies")

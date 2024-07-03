@@ -51,7 +51,7 @@ public class JobController {
         }
 
         return ResponseEntity.ok()
-                .body(this.jobService.handleUpdateAJob(job));
+                .body(this.jobService.handleUpdateAJob(job, currentJob));
     }
 
     @DeleteMapping("/jobs/{id}")
