@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ public class CompanyController {
     }
 
     @PostMapping("/companies")
+    @ApiMessage("create a company")
     public ResponseEntity<Company> createNewCompany(@Valid @RequestBody Company postManCompany) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.companyService.handleCreateCompany(postManCompany));
     }
@@ -51,17 +53,22 @@ public class CompanyController {
 
     @GetMapping("/companies/{id}")
     @ApiMessage("fetch company by id")
-    public ResponseEntity<Company> getCompanyById(@PathVariable("id") long id) {
+    public ResponseEntity<Company> fetchCompanyById(@PathVariable("id") long id) throws IdInvalidException {
         Company company = this.companyService.getCompanyById(id);
+        if (company == null) {
+            throw new IdInvalidException("Company voi id = " + id + " khong ton tai");
+        }
         return ResponseEntity.ok().body(company);
     }
 
     @PutMapping("/companies")
+    @ApiMessage("update a company")
     public ResponseEntity<Company> updateACompany(@Valid @RequestBody Company company) {
         return ResponseEntity.status(HttpStatus.OK).body(this.companyService.handleUpdateACompany(company));
     }
 
     @DeleteMapping("/companies/{id}")
+    @ApiMessage("delete a company")
     public ResponseEntity<Void> deleteACompany(@PathVariable("id") long id) {
         this.companyService.handleDeleteACompany(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
