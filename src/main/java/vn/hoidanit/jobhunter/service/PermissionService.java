@@ -36,15 +36,26 @@ public class PermissionService {
                 p.getMethod());
     }
 
+    public boolean isSameName(Permission p) {
+        Permission permissionDB = this.fetchById(p.getId());
+        if (permissionDB != null) {
+            if (permissionDB.getName().equals(p.getName()))
+                return true;
+        }
+        return false;
+    }
+
     public Permission update(Permission p) {
         Permission currentPermission = this.permissionRepository.findById(p.getId());
         if (currentPermission != null) {
+            currentPermission.setName(p.getName());
             currentPermission.setModule(p.getModule());
             currentPermission.setApiPath(p.getApiPath());
             currentPermission.setMethod(p.getMethod());
-            this.permissionRepository.save(currentPermission);
+            currentPermission = this.permissionRepository.save(currentPermission);
+            return currentPermission;
         }
-        return currentPermission;
+        return null;
     }
 
     public ResultPaginationDTO fetchAllPermission(Specification<Permission> spec, Pageable pageable) {

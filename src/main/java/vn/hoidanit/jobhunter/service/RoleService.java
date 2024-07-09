@@ -45,6 +45,7 @@ public class RoleService {
     }
 
     public Role update(Role role) {
+        Role currentRole = this.roleRepository.findById(role.getId());
         if (role.getPermissions() != null) {
             List<Long> reqPermissions = role.getPermissions()
                     .stream().map(x -> x.getId())
@@ -53,14 +54,12 @@ public class RoleService {
             List<Permission> dbPermissions = this.permissionRepository.findByIdIn(reqPermissions);
             role.setPermissions(dbPermissions);
         }
-        Role currentRole = this.roleRepository.findById(role.getId());
-        if (currentRole != null) {
-            currentRole.setName(role.getName());
-            currentRole.setDescription(role.getDescription());
-            currentRole.setActive(role.isActive());
-            currentRole.setPermissions(role.getPermissions());
-            this.roleRepository.save(currentRole);
-        }
+
+        currentRole.setName(role.getName());
+        currentRole.setDescription(role.getDescription());
+        currentRole.setActive(role.isActive());
+        currentRole.setPermissions(role.getPermissions());
+        currentRole = this.roleRepository.save(currentRole);
         return currentRole;
     }
 

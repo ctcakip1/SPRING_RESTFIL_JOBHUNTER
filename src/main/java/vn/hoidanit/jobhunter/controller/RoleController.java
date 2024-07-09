@@ -49,9 +49,10 @@ public class RoleController {
     @ApiMessage("update a role")
     public ResponseEntity<Role> update(@RequestBody Role r) throws IdInvalidException {
         Role role = this.roleService.findRoleById(r.getId());
-        if (this.roleService.isNameExist(r.getName())) {
-            throw new IdInvalidException("Role voi name = " + r.getName() + " da ton tai");
-        }
+        // if (this.roleService.isNameExist(r.getName())) {
+        // throw new IdInvalidException("Role voi name = " + r.getName() + " da ton
+        // tai");
+        // }
         if (role == null) {
             throw new IdInvalidException("Role voi id = " + r.getId() + " khong ton tai");
         }
@@ -76,4 +77,16 @@ public class RoleController {
         this.roleService.delete(id);
         return ResponseEntity.ok().body(null);
     }
+
+    @GetMapping("/roles/{id}")
+    @ApiMessage("fetch role by id")
+    public ResponseEntity<Role> getById(@PathVariable("id") long id) throws IdInvalidException {
+        Role role = this.roleService.findRoleById(id);
+        if (role == null) {
+            throw new IdInvalidException("Resume voi id = " + id + " khong ton tai");
+        }
+
+        return ResponseEntity.ok().body(role);
+    }
+
 }

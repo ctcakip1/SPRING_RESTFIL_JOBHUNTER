@@ -52,7 +52,10 @@ public class PermissionController {
             throw new IdInvalidException("Permission voi id = " + p.getId() + " khong ton tai");
         }
         if (this.permissionService.isPermissionExist(p)) {
-            throw new IdInvalidException("Permission da ton tai");
+            // check name
+            if (this.permissionService.isSameName(p)) {
+                throw new IdInvalidException("Permission da ton tai");
+            }
         }
         return ResponseEntity.ok().body(this.permissionService.update(p));
     }
@@ -67,7 +70,10 @@ public class PermissionController {
 
     @DeleteMapping("/permission/{id}")
     @ApiMessage("delete a permission")
-    public ResponseEntity<Void> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") long id) throws IdInvalidException {
+        if (this.permissionService.fetchById(id) == null) {
+            throw new IdInvalidException("Permission voi id = " + id + " khong ton tai");
+        }
         this.permissionService.delete(id);
         return ResponseEntity.ok().body(null);
     }
