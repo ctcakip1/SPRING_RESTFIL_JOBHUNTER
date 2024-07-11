@@ -68,7 +68,7 @@ public class PermissionController {
         return ResponseEntity.ok().body(permissions);
     }
 
-    @DeleteMapping("/permission/{id}")
+    @DeleteMapping("/permissions/{id}")
     @ApiMessage("delete a permission")
     public ResponseEntity<Void> delete(@PathVariable("id") long id) throws IdInvalidException {
         if (this.permissionService.fetchById(id) == null) {

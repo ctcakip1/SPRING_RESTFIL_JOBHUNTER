@@ -93,7 +93,7 @@ public class AuthController {
         }
 
         @GetMapping("/auth/account")
-        @ApiMessage("fetch account message")
+        @ApiMessage("fetch account")
         public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
                 String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get()
                                 : "";
@@ -182,7 +182,7 @@ public class AuthController {
                                 .maxAge(0)
                                 .build();
 
-                return ResponseEntity.status(HttpStatus.CREATED)
+                return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, deleteSpringCookie.toString())
                                 .body(null);
         }
