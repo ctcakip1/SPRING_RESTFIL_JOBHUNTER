@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import net.bytebuddy.asm.Advice.Return;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
@@ -20,7 +19,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository,UserRepository userRepository) {
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
         this.userRepository = userRepository;
 
@@ -60,7 +59,7 @@ public class CompanyService {
 
     public void handleDeleteACompany(long id) {
         Company company = this.getCompanyById(id);
-        if(company != null){
+        if (company != null) {
             // fetch all user belong to this company
             List<User> users = this.userRepository.findByCompany(company);
             this.userRepository.deleteAll(users);
